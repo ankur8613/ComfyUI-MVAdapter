@@ -332,8 +332,19 @@ class ControlNetModelLoader:
 class DiffusersMVModelMakeup:
     def __init__(self):
         self.hf_dir = folder_paths.get_folder_paths("diffusers")[0]
-        self.torch_device = get_torch_device()
-        self.dtype = torch.float16
+        self.torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+        print(f"[DiffusersMVModelMakeup] Using device {self.torch_device}, dtype {self.dtype}")
+
+# When loading your model:
+pipe = DiffusionPipeline.from_pretrained(
+    self.hf_dir,
+    torch_dtype=self.dtype
+)
+
+# Force model to GPU
+pipe.to(self.torch_device)
+print(f"[DiffusersMVModelMakeup] Model moved to {self.torch_device}")
 
     @classmethod
     def INPUT_TYPES(s):
