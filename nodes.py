@@ -336,15 +336,18 @@ class DiffusersMVModelMakeup:
         self.dtype = torch.float16 if torch.cuda.is_available() else torch.float32
         print(f"[DiffusersMVModelMakeup] Using device {self.torch_device}, dtype {self.dtype}")
 
-# When loading your model:
-pipe = DiffusionPipeline.from_pretrained(
-    self.hf_dir,
-    torch_dtype=self.dtype
-)
+    def load_pipeline(self):
+        # Load model with desired dtype
+        pipe = DiffusionPipeline.from_pretrained(
+            self.hf_dir,
+            torch_dtype=self.dtype
+        )
 
-# Force model to GPU
-pipe.to(self.torch_device)
-print(f"[DiffusersMVModelMakeup] Model moved to {self.torch_device}")
+        # Force model to GPU
+        pipe.to(self.torch_device)
+        print(f"[DiffusersMVModelMakeup] Model moved to {self.torch_device}")
+
+        return pipe
 
     @classmethod
     def INPUT_TYPES(s):
